@@ -1,31 +1,48 @@
 'use client'
 
-import { FC, FormEvent } from 'react'
+import { FC, FormEvent, useState } from 'react'
 import { getTrimmedVideo } from '@core'
 
 interface TrimFormProps {
   video: File
   duration: number
+  externalStart?: number
+  externalEnd?: number
 }
 
-const TrimForm: FC<TrimFormProps> = ({ video, duration }) => {
+const TrimForm: FC<TrimFormProps> = ({ video, duration, externalStart, externalEnd }) => {
+  const [start, setStart] = useState(externalStart || 0)
+  const [end, setEnd] = useState(externalEnd || 0)
+  const [isProcessing, setIsProcessing] = useState(false)
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const startTime = Number(formData.get('startTime'))
-    const endTime = Number(formData.get('endTime'))
 
-    if (!video || startTime >= endTime || endTime > duration) return
+    if (!video || start >= end || end > duration) return
 
-    const trimmedVideo = await getTrimmedVideo(video, startTime, endTime)
-    if (!trimmedVideo) return
+    try {
+      setIsProcessing(true)
+      const videoUrl = await getTrimmedVideo(video, start, end)
 
-    const a = document.createElement('a')
-    a.href = trimmedVideo
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(trimmedVideo)
+      if (!videoUrl) {
+        throw new Error('Failed to trim video')
+      }
+
+      const extension = video.name.split('.').pop() || 'mp4'
+
+      const a = document.createElement('a')
+      a.href = videoUrl
+      a.download = `trimmed_${Math.floor(Date.now() / 1000)}.${extension}`
+      document.body.appendChild(a)
+      a.click()
+
+      document.body.removeChild(a)
+      URL.revokeObjectURL(videoUrl)
+    } catch (error) {
+      console.error('Error trimming video:', error)
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   return (
@@ -42,6 +59,8 @@ const TrimForm: FC<TrimFormProps> = ({ video, duration }) => {
             name="startTime"
             min={0}
             max={duration}
+            value={start}
+            onChange={e => setStart(Number(e.target.value))}
             className="px-3 py-2 border rounded"
           />
         </div>
@@ -55,11 +74,15 @@ const TrimForm: FC<TrimFormProps> = ({ video, duration }) => {
             name="endTime"
             min={0}
             max={duration}
+            value={end}
+            onChange={e => setEnd(Number(e.target.value))}
             className="px-3 py-2 border rounded"
           />
         </div>
       </div>
-      <button type="submit">Download</button>
+      <button type="submit" disabled={isProcessing} className="">
+        {isProcessing ? 'Processing...' : 'Download'}
+      </button>
     </form>
   )
 }
