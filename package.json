@@ -11,9 +11,17 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
+    "@mui/material": "^7.2.0",
+    "@mui/material-nextjs": "^7.2.0",
     "next": "15.4.2",
+    "postcss": "^8.5.6",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "vertx": "^0.0.1-security"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.0.1",
@@ -23,7 +31,9 @@
     "@storybook/addon-vitest": "^9.0.18",
     "@storybook/nextjs": "^9.0.18",
     "@storybook/nextjs-vite": "^9.0.18",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/fluent-ffmpeg": "^2.1.27",
+    "@types/formidable": "^3.4.5",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -34,7 +44,7 @@
     "eslint-plugin-storybook": "^9.0.18",
     "playwright": "^1.54.1",
     "storybook": "^9.0.18",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.1.11",
     "typescript": "^5",
     "vitest": "^3.2.4"
   }
