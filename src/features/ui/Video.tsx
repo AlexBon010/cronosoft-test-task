@@ -12,22 +12,24 @@ interface VideoProps {
 
 const Video: FC<VideoProps> = ({ video, ref, onTimeUpdate, onLoadedMetadata, onFileChange }) => {
   return (
-    <div className="w-120 h-80 bg-gray-400 mb-5">
+    <div className="flex items-center justify-center w-120 h-80 bg-gray-400 mb-5">
       {video ? (
         <video
           ref={ref}
           src={video}
           controls
-          className="mb-2 rounded bg-black object-contain"
+          className="rounded bg-black object-contain w-120 h-80"
           onTimeUpdate={onTimeUpdate}
           onLoadedMetadata={onLoadedMetadata}
-          style={{ width: '480px', height: '320px' }}
         >
           Your browser does not support the video tag.
         </video>
       ) : (
-        <div className="mb-4">
-          <input type="file" className="" onChange={onFileChange} accept="video/*" />
+        <div>
+          <input type="file" id="file-upload" className="hidden" onChange={onFileChange} accept="video/*" />
+          <label htmlFor="file-upload" className="cursor-pointer">
+            <span className="text-xl text-gray-800">Upload Video</span>
+          </label>
         </div>
       )}
     </div>

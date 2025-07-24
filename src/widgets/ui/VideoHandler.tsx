@@ -4,10 +4,10 @@ import { ChangeEvent, FC, useReducer, useRef } from 'react'
 
 import { initialVideoState, videoReducer } from '../state/video'
 
-import { FrameStrip, Video } from '@features'
+import { FrameStrip, TrimForm, Video } from '@features'
 
 const VideoHandler: FC = () => {
-  const [{ videoFile, videoUrl, currentTime }, dispatch] = useReducer(videoReducer, initialVideoState)
+  const [{ videoFile, videoUrl, currentTime, videoDuration }, dispatch] = useReducer(videoReducer, initialVideoState)
   const videoRef = useRef<HTMLVideoElement | null>(null)
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -16,6 +16,7 @@ const VideoHandler: FC = () => {
       dispatch({ type: 'RESET' })
       return
     }
+
     dispatch({ type: 'SET_FILE', payload: file })
     dispatch({ type: 'SET_URL', payload: URL.createObjectURL(file) })
   }
@@ -28,6 +29,8 @@ const VideoHandler: FC = () => {
 
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
+      const videoDuration = videoRef.current?.duration
+      dispatch({ type: 'SET_VIDEO_DURATION', payload: videoDuration || 0 })
       dispatch({ type: 'SET_DURATION', payload: videoRef.current.duration })
     }
   }
@@ -40,13 +43,17 @@ const VideoHandler: FC = () => {
 
   return (
     <div className="flex flex-col items-center">
-      <Video
-        video={videoUrl}
-        ref={videoRef}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
-        onFileChange={handleFileChange}
-      />
+      <div className="flex gap-3 items-center">
+        <Video
+          video={videoUrl}
+          ref={videoRef}
+          onTimeUpdate={handleTimeUpdate}
+          onLoadedMetadata={handleLoadedMetadata}
+          onFileChange={handleFileChange}
+        />
+        {videoFile && <TrimForm video={videoFile} duration={videoDuration} />}
+      </div>
+
       {videoFile && <FrameStrip video={videoFile} currentTime={currentTime} onFrameClick={handleSeek} />}
     </div>
   )

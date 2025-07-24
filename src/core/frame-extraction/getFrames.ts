@@ -10,11 +10,11 @@ const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd'
 
 const getExtractedFrames = async (ffmpeg: FFmpeg): Promise<Frame[]> => {
   try {
-    const files = await ffmpeg.listDir('./frames')
+    const files = await ffmpeg.listDir('frames')
 
     const frameFilenames = Array.from(
       { length: files.length - 2 },
-      (_, i) => `./frames/frame_${(i + 1).toString().padStart(3, '0')}.jpg`,
+      (_, i) => `frames/frame_${(i + 1).toString().padStart(3, '0')}.jpg`,
     )
     const frameData = await Promise.all(frameFilenames.map(filename => ffmpeg.readFile(filename)))
 
@@ -40,21 +40,14 @@ const getFrames = async (video: File): Promise<Frame[]> => {
     await ffmpeg.load({
       coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
       wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-    }),
-      await Promise.all([ffmpeg.createDir('/inputs'), ffmpeg.createDir('/frames')])
+    })
+    await Promise.all([ffmpeg.createDir('inputs'), ffmpeg.createDir('frames')])
 
-    await ffmpeg.writeFile('/inputs/input.video', await fetchFile(video))
+    await ffmpeg.writeFile('inputs/input.mp4', await fetchFile(video))
 
-    await ffmpeg.exec([
-      '-i',
-      '/inputs/input.video',
-      '-vf',
-      'fps=1,scale=320:-1',
-      '-q:v',
-      '31',
-      '/frames/frame_%03d.jpg',
-    ])
+    await ffmpeg.exec(['-i', 'inputs/input.mp4', '-vf', 'fps=1,scale=320:-1', '-q:v', '31', 'frames/frame_%03d.jpg'])
     const frameData = await getExtractedFrames(ffmpeg)
+
     return frameData
   } catch (error) {
     console.error(error)
