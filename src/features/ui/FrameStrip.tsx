@@ -3,6 +3,7 @@
 import { FC, useRef, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useFrameExtractor } from '@core'
+import styles from './FrameStrip.module.css'
 
 interface FrameStripProps {
   video: File
@@ -18,7 +19,7 @@ const FrameStrip: FC<FrameStripProps> = ({ video, currentTime, onFrameClick }) =
   useEffect(() => {
     if (!frames.length || !stripRef.current) return
 
-    const stripWidth = stripRef.current.scrollWidth
+    const stripWidth = stripRef.current.clientWidth - 2
     const totalDuration = frames[frames.length - 1].timestamp
     const position = (currentTime / totalDuration) * stripWidth
 
@@ -30,25 +31,22 @@ const FrameStrip: FC<FrameStripProps> = ({ video, currentTime, onFrameClick }) =
   }
 
   return (
-    <div className="relative">
-      <div ref={stripRef} className="flex overflow-x-auto rounded-lg">
+    <div className={styles.strip}>
+      <div ref={stripRef} className={styles.container}>
+        <div
+          className={styles.cursor}
+          style={{
+            transform: `translateX(${cursorPosition}px)`,
+          }}
+        />
         {frames.map(({ frame, timestamp }) => {
           return (
-            <div key={frame} className="flex-shrink-0 text-center" onClick={() => onFrameClick(timestamp)}>
-              <Image src={frame} alt={`Frame at ${timestamp.toFixed(2)}s`} width={80} height={45} />
-              <span className="text-xs text-gray-500">{timestamp.toFixed(1)}s</span>
+            <div key={frame} className={styles.item} onClick={() => onFrameClick(timestamp)}>
+              <Image src={frame} alt={`Frame at ${timestamp.toFixed(2)}s`} width={120} height={85} />
             </div>
           )
         })}
       </div>
-      <div
-        className="absolute top-0 bottom-0 w-0.5 bg-red-500 opacity-80 z-10 pointer-events-none"
-        style={{
-          left: 0,
-          transform: `translateX(${cursorPosition}px)`,
-          transition: 'transform 0.2s linear',
-        }}
-      />
     </div>
   )
 }
