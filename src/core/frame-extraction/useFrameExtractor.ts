@@ -4,6 +4,7 @@ import getFrames, { Frame } from './getFrames'
 
 interface UseFrameExtractorProps {
   video: File
+  duration: number
 }
 
 interface UseFrameExtractorReturn {
@@ -11,7 +12,7 @@ interface UseFrameExtractorReturn {
   frames: Frame[]
 }
 
-const useFrameExtractor = ({ video }: UseFrameExtractorProps): UseFrameExtractorReturn => {
+const useFrameExtractor = ({ video, duration }: UseFrameExtractorProps): UseFrameExtractorReturn => {
   const [frames, setFrames] = useState<Frame[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
@@ -19,7 +20,7 @@ const useFrameExtractor = ({ video }: UseFrameExtractorProps): UseFrameExtractor
     const getFramesTemp = async () => {
       try {
         setIsLoading(true)
-        const frames = await getFrames(video)
+        const frames = await getFrames(video, duration)
         setFrames(frames)
       } catch (error) {
         setFrames([])

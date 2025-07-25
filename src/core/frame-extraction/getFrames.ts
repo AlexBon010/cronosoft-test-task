@@ -8,7 +8,7 @@ export interface Frame {
 
 const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd'
 
-const getExtractedFrames = async (ffmpeg: FFmpeg): Promise<Frame[]> => {
+const getExtractedFrames = async (ffmpeg: FFmpeg, duration: number): Promise<Frame[]> => {
   try {
     const files = await ffmpeg.listDir('frames')
 
@@ -22,7 +22,7 @@ const getExtractedFrames = async (ffmpeg: FFmpeg): Promise<Frame[]> => {
       const blob = new Blob([frameData as BlobPart], { type: 'image/jpeg' })
       const url = URL.createObjectURL(blob)
       return {
-        timestamp: index,
+        timestamp: Number(((index * duration) / (files.length - 2)).toFixed(2)),
         frame: url,
       }
     })
@@ -33,7 +33,7 @@ const getExtractedFrames = async (ffmpeg: FFmpeg): Promise<Frame[]> => {
   }
 }
 
-const getFrames = async (video: File): Promise<Frame[]> => {
+const getFrames = async (video: File, duration: number): Promise<Frame[]> => {
   try {
     const ffmpeg = new FFmpeg()
 
@@ -46,7 +46,7 @@ const getFrames = async (video: File): Promise<Frame[]> => {
     await ffmpeg.writeFile('inputs/input.mp4', await fetchFile(video))
 
     await ffmpeg.exec(['-i', 'inputs/input.mp4', '-vf', 'fps=1,scale=320:-1', '-q:v', '31', 'frames/frame_%03d.jpg'])
-    const frameData = await getExtractedFrames(ffmpeg)
+    const frameData = await getExtractedFrames(ffmpeg, duration)
 
     return frameData
   } catch (error) {

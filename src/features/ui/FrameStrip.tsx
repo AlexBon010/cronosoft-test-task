@@ -3,16 +3,16 @@
 import { FC, useRef, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useFrameExtractor } from '@core'
-import styles from './FrameStrip.module.css'
 
 interface FrameStripProps {
   video: File
+  duration: number
   currentTime: number
   onFrameClick: (timestamp: number) => void
 }
 
-const FrameStrip: FC<FrameStripProps> = ({ video, currentTime, onFrameClick }) => {
-  const { frames, isLoading } = useFrameExtractor({ video })
+const FrameStrip: FC<FrameStripProps> = ({ video, duration, currentTime, onFrameClick }) => {
+  const { frames, isLoading } = useFrameExtractor({ video, duration })
   const stripRef = useRef<HTMLDivElement>(null)
   const [cursorPosition, setCursorPosition] = useState(0)
 
@@ -31,27 +31,30 @@ const FrameStrip: FC<FrameStripProps> = ({ video, currentTime, onFrameClick }) =
   }
 
   return (
-    <div className={styles.strip}>
-      <div ref={stripRef} className={styles.container}>
-        <div
+    <div>
+      <div ref={stripRef} className="">
+        {/* <div
           className={styles.cursor}
           style={{
             transform: `translateX(${cursorPosition}px)`,
           }}
-        />
-        {frames.map(({ frame, timestamp }) => {
-          return (
-            <div key={frame} className={styles.item} onClick={() => onFrameClick(timestamp)}>
+        /> */}
+        <div className="flex w-260 overflow-x-auto">
+          {frames.map(({ frame, timestamp }) => {
+            return (
               <Image
+                className="cursor-pointer"
+                key={timestamp}
                 src={frame}
-                alt={`Frame at ${timestamp.toFixed(2)}s`}
+                alt={`Frame at ${timestamp}s`}
+                data-timestamp={timestamp}
                 width={120}
                 height={85}
-                className="w-auto h-auto max-w-100 max-h-75"
+                onClick={() => onFrameClick(timestamp)}
               />
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
     </div>
   )
