@@ -9,7 +9,6 @@ interface VideoProps {
   onLoadedMetadata: () => void
   onFileChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
-
 const Video: FC<VideoProps> = ({ video, ref, onTimeUpdate, onLoadedMetadata, onFileChange }) => {
   return (
     <div className="flex items-center justify-center w-120 h-80 bg-gray-400 mb-5">

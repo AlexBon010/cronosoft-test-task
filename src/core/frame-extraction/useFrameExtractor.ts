@@ -30,7 +30,7 @@ const useFrameExtractor = ({ video, duration }: UseFrameExtractorProps): UseFram
       }
     }
     getFramesTemp()
-  }, [video])
+  }, [duration, video])
 
   return {
     frames,

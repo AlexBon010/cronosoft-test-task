@@ -19,6 +19,7 @@
       }
     ],
     "paths": {
+      "@entities": ["./src/entities"],
       "@core": ["./src/core"],
       "@features": ["./src/features"],
       "@widgets": ["./src/widgets"],

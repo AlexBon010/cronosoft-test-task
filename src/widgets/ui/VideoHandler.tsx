@@ -30,15 +30,14 @@ const VideoHandler: FC = () => {
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
       const videoDuration = videoRef.current?.duration
-      dispatch({ type: 'SET_VIDEO_DURATION', payload: videoDuration / 100 || 0 })
+      dispatch({ type: 'SET_VIDEO_DURATION', payload: videoDuration || 0 })
       dispatch({ type: 'SET_DURATION', payload: videoRef.current.duration })
     }
   }
 
   const handleSeek = (time: number) => {
     if (!videoRef.current) throw new Error('Video ref is not set')
-    videoRef.current.currentTime = time * 100
-    console.log(time)
+    videoRef.current.currentTime = time
     dispatch({ type: 'SET_CURRENT_TIME', payload: time })
   }
 
@@ -52,7 +51,7 @@ const VideoHandler: FC = () => {
           onLoadedMetadata={handleLoadedMetadata}
           onFileChange={handleFileChange}
         />
-        {videoFile && <TrimForm video={videoFile} duration={videoDuration} />}
+        {videoFile && <TrimForm video={videoFile} duration={videoDuration * 100} />}
       </div>
 
       {videoFile && videoDuration && (

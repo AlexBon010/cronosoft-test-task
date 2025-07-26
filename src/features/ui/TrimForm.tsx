@@ -6,13 +6,20 @@ import { getTrimmedVideo } from '@core'
 interface TrimFormProps {
   video: File
   duration: number
-  externalStart?: number
-  externalEnd?: number
+  externalStart?: number | null
+  externalEnd?: number | null
+}
+
+interface Range {
+  start: number
+  end: number
 }
 
 const TrimForm: FC<TrimFormProps> = ({ video, duration, externalStart, externalEnd }) => {
-  const [start, setStart] = useState(externalStart || 0)
-  const [end, setEnd] = useState(externalEnd || 0)
+  const [{ start, end }, setRange] = useState<Range>({
+    start: externalStart || 0,
+    end: externalEnd || 0,
+  })
   const [isProcessing, setIsProcessing] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -58,9 +65,10 @@ const TrimForm: FC<TrimFormProps> = ({ video, duration, externalStart, externalE
             id="startTime"
             name="startTime"
             min={0}
+            step={1}
             max={duration}
             value={start}
-            onChange={e => setStart(Number(e.target.value))}
+            onChange={e => setRange(prev => ({ ...prev, start: Number(e.target.value) }))}
             className="px-3 py-2 border rounded"
           />
         </div>
@@ -73,14 +81,15 @@ const TrimForm: FC<TrimFormProps> = ({ video, duration, externalStart, externalE
             id="endTime"
             name="endTime"
             min={0}
+            step={1}
             max={duration}
             value={end}
-            onChange={e => setEnd(Number(e.target.value))}
+            onChange={e => setRange(prev => ({ ...prev, end: Number(e.target.value) }))}
             className="px-3 py-2 border rounded"
           />
         </div>
       </div>
-      <button type="submit" disabled={isProcessing} className="">
+      <button type="submit" disabled={isProcessing} className="cursor-pointer">
         {isProcessing ? 'Processing...' : 'Download'}
       </button>
     </form>
