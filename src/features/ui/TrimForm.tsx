@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, FormEvent, useState } from 'react'
+import { FC, FormEvent, useEffect, useState } from 'react'
 import { getTrimmedVideo } from '@core'
 
 interface TrimFormProps {
@@ -17,10 +17,17 @@ interface Range {
 
 const TrimForm: FC<TrimFormProps> = ({ video, duration, externalStart, externalEnd }) => {
   const [{ start, end }, setRange] = useState<Range>({
-    start: externalStart || 0,
-    end: externalEnd || 0,
+    start: 0,
+    end: 0,
   })
   const [isProcessing, setIsProcessing] = useState(false)
+
+  useEffect(() => {
+    setRange({
+      start: externalStart || 0,
+      end: externalEnd || 0,
+    })
+  }, [externalStart, externalEnd])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -53,7 +60,7 @@ const TrimForm: FC<TrimFormProps> = ({ video, duration, externalStart, externalE
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 mb-4">
       <h3 className="text-lg font-bold">Trim Video</h3>
       <div className="flex gap-4">
         <div className="flex flex-col">
@@ -65,7 +72,7 @@ const TrimForm: FC<TrimFormProps> = ({ video, duration, externalStart, externalE
             id="startTime"
             name="startTime"
             min={0}
-            step={1}
+            step={0.01}
             max={duration}
             value={start}
             onChange={e => setRange(prev => ({ ...prev, start: Number(e.target.value) }))}
@@ -81,7 +88,7 @@ const TrimForm: FC<TrimFormProps> = ({ video, duration, externalStart, externalE
             id="endTime"
             name="endTime"
             min={0}
-            step={1}
+            step={0.01}
             max={duration}
             value={end}
             onChange={e => setRange(prev => ({ ...prev, end: Number(e.target.value) }))}

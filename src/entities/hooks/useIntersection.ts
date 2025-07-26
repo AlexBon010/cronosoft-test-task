@@ -32,13 +32,17 @@ const useIntersection = ({
       const containerRect = container.getBoundingClientRect();
       const draggableRect = draggable.getBoundingClientRect();
 
-      const relativeLeft = draggableRect.left - containerRect.left;
-      const relativeRight = draggableRect.right - containerRect.left;
+      // Учитываем скролл контейнера для абсолютного позиционирования
+      const scrollLeft = container.scrollLeft;
+      
+      // Абсолютная позиция draggable относительно начала ленты
+      const absoluteLeft = (draggableRect.left - containerRect.left) + scrollLeft;
+      const absoluteRight = absoluteLeft + draggableRect.width;
 
       const stripWidth = frameWidth * framesCount;
 
-      const startTime = Math.max(0, Math.min(duration, (relativeLeft / stripWidth) * duration));
-      const endTime = Math.max(0, Math.min(duration, (relativeRight / stripWidth) * duration));
+      const startTime = Math.max(0, Math.min(duration, (absoluteLeft / stripWidth) * duration));
+      const endTime = Math.max(0, Math.min(duration, (absoluteRight / stripWidth) * duration));
 
       setRange({
         startTime: Number(startTime.toFixed(2)),

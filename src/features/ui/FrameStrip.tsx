@@ -4,6 +4,7 @@ import { FC, useRef, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useFrameExtractor } from '@core'
 import { TimestampCursor, TrimDraggableSection, useIntersection } from '@entities'
+import { TrimForm } from '@features'
 
 interface FrameStripProps {
   video: File
@@ -24,12 +25,15 @@ const FrameStrip: FC<FrameStripProps> = ({ video, duration, onFrameClick, curren
     framesCount: frames.length,
     duration,
   })
+
   console.log(startTime, endTime)
   if (isLoading) {
     return <div>Loading...</div>
   }
   return (
     <div>
+      {video && <TrimForm video={video} duration={duration * 100} externalStart={startTime} externalEnd={endTime} />}
+
       <div ref={stripRef} className="relative max-w-260 overflow-x-auto">
         <TimestampCursor currentFrame={currentTime} frameWidth={160} framesCount={frames.length} />
         <TrimDraggableSection ref={draggableElRef} containerRef={stripRef} />
@@ -41,7 +45,6 @@ const FrameStrip: FC<FrameStripProps> = ({ video, duration, onFrameClick, curren
                   className="cursor-pointer w-full h-full"
                   src={frame}
                   alt={`Frame at ${timestamp}s`}
-                  data-timestamp={timestamp}
                   width={160}
                   height={92}
                   onClick={() => onFrameClick(timestamp)}

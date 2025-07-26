@@ -21,9 +21,9 @@ const getExtractedFrames = async (ffmpeg: FFmpeg, duration: number): Promise<Fra
     const processedFrames = frameData.map((frameData, index) => {
       const blob = new Blob([frameData as BlobPart], { type: 'image/jpeg' })
       const url = URL.createObjectURL(blob)
-      
+      const timestamp = +(index * duration / (files.length - 2)).toFixed(2)
       return {
-        timestamp: +(index * duration * 100 / (files.length - 2)).toFixed(2),
+        timestamp,
         frame: url,
       }
     })

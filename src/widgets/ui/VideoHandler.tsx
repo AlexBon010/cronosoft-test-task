@@ -4,7 +4,7 @@ import { ChangeEvent, FC, useReducer, useRef } from 'react'
 
 import { initialVideoState, videoReducer } from '../state/video'
 
-import { FrameStrip, TrimForm, Video } from '@features'
+import { FrameStrip, Video } from '@features'
 
 const VideoHandler: FC = () => {
   const [{ videoFile, videoUrl, currentTime, videoDuration }, dispatch] = useReducer(videoReducer, initialVideoState)
@@ -51,7 +51,6 @@ const VideoHandler: FC = () => {
           onLoadedMetadata={handleLoadedMetadata}
           onFileChange={handleFileChange}
         />
-        {videoFile && <TrimForm video={videoFile} duration={videoDuration * 100} />}
       </div>
 
       {videoFile && videoDuration && (
