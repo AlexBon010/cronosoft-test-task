@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useRef, useEffect, useState } from 'react'
+import { FC, useRef } from 'react'
 import Image from 'next/image'
 import { useFrameExtractor } from '@core'
 import { TimestampCursor, TrimDraggableSection, useIntersection } from '@entities'
@@ -26,7 +26,6 @@ const FrameStrip: FC<FrameStripProps> = ({ video, duration, onFrameClick, curren
     duration,
   })
 
-  console.log(startTime, endTime)
   if (isLoading) {
     return <div>Loading...</div>
   }
