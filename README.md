@@ -8,7 +8,7 @@
 
 ## Деплой приложения
 
-[Ссылка на деплой)](https://effervescent-gumption-b1277a.netlify.app/)
+[Ссылка на деплой](https://effervescent-gumption-b1277a.netlify.app/)
 
 ---
 
